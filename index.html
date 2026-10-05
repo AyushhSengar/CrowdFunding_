@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Crowdfunding Platform</title>
+    <title>CrowdFund</title>
 
     <link rel="stylesheet" href="style.css">
 </head>
@@ -13,20 +13,27 @@
 
     <!-- ================= LOGIN PAGE ================= -->
 
-    <div id="loginPage" class="page">
+    <div id="loginPage" class="login-page">
 
-        <div class="login-container">
+        <div class="login-card">
 
-            <h1>Crowdfunding Platform</h1>
+            <div class="login-logo">
+                CrowdFund
+            </div>
+
+            <h1>Welcome Back</h1>
 
             <p class="login-subtitle">
-                Login to continue
+                Login to continue to CrowdFund
             </p>
 
             <form id="loginForm">
 
                 <div class="form-group">
-                    <label>Email / ID</label>
+
+                    <label for="loginEmail">
+                        Email / ID
+                    </label>
 
                     <input
                         type="email"
@@ -34,10 +41,15 @@
                         placeholder="Enter your email"
                         required
                     >
+
                 </div>
 
+
                 <div class="form-group">
-                    <label>Password</label>
+
+                    <label for="loginPassword">
+                        Password
+                    </label>
 
                     <input
                         type="password"
@@ -45,41 +57,55 @@
                         placeholder="Enter your password"
                         required
                     >
+
                 </div>
 
-                <button type="submit" class="primary-button">
+
+                <button
+                    type="submit"
+                    class="primary-button login-button"
+                >
                     Login
                 </button>
 
             </form>
 
-            <p id="loginError" class="error-message"></p>
+
+            <p
+                id="loginError"
+                class="error-message"
+            ></p>
 
         </div>
 
     </div>
 
 
+
     <!-- ================= MAIN APPLICATION ================= -->
 
-    <div id="appPage" class="page hidden">
+    <div id="appPage" class="app-page hidden">
 
-        <!-- HEADER -->
 
-        <header class="header">
+        <!-- ================= HEADER ================= -->
 
-            <div class="header-left">
-                <h1>Crowdfunding Platform</h1>
+        <header class="top-header">
+
+            <div class="brand" id="brandTitle">
+                CrowdFund
             </div>
 
-            <div class="header-right">
 
-                <span id="userName"></span>
+            <div class="header-actions">
 
-                <span id="userRole" class="role-badge"></span>
+                <span
+                    id="loggedInUser"
+                    class="logged-user"
+                ></span>
+
 
                 <button
-                    onclick="logoutUser()"
+                    id="logoutButton"
                     class="logout-button"
                 >
                     Logout
@@ -90,162 +116,543 @@
         </header>
 
 
-        <!-- ================= ADMIN DASHBOARD ================= -->
 
-        <section id="adminDashboard" class="dashboard hidden">
+        <!-- ================= APPLICATION BODY ================= -->
 
-            <div class="dashboard-title">
-
-                <h2>Admin Dashboard</h2>
-
-                <p>
-                    Review and manage campaign requests.
-                </p>
-
-            </div>
+        <main class="app-container">
 
 
-            <div class="section-box">
+            <!-- ================================================= -->
+            <!-- CONTRIBUTOR DASHBOARD -->
+            <!-- ================================================= -->
 
-                <h3>Pending Campaigns</h3>
+            <section
+                id="contributorDashboard"
+                class="role-dashboard hidden"
+            >
 
-                <div id="adminCampaigns">
+                <div class="sidebar">
 
-                    <p class="empty-message">
-                        Loading campaigns...
-                    </p>
-
-                </div>
-
-            </div>
-
-        </section>
-
-
-        <!-- ================= CONTRIBUTOR DASHBOARD ================= -->
-
-        <section id="contributorDashboard" class="dashboard hidden">
-
-            <div class="dashboard-title">
-
-                <h2>Campaigns</h2>
-
-                <p>
-                    Support approved campaigns by contributing.
-                </p>
-
-            </div>
-
-
-            <div class="section-box">
-
-                <h3>Available Campaigns</h3>
-
-                <div id="contributorCampaigns">
-
-                    <p class="empty-message">
-                        Loading campaigns...
-                    </p>
-
-                </div>
-
-            </div>
-
-        </section>
-
-
-        <!-- ================= CREATOR DASHBOARD ================= -->
-
-        <section id="creatorDashboard" class="dashboard hidden">
-
-            <!-- CREATE CAMPAIGN -->
-
-            <div class="section-box">
-
-                <h2>Create Campaign</h2>
-
-                <form id="campaignForm">
-
-                    <div class="form-group">
-
-                        <label>Campaign Name</label>
-
-                        <input
-                            type="text"
-                            id="campaignTitle"
-                            placeholder="Enter campaign name"
-                            required
-                        >
-
-                    </div>
-
-
-                    <div class="form-group">
-
-                        <label>Description</label>
-
-                        <textarea
-                            id="campaignDescription"
-                            placeholder="Enter campaign description"
-                            required
-                        ></textarea>
-
-                    </div>
-
-
-                    <div class="form-group">
-
-                        <label>Target Amount</label>
-
-                        <input
-                            type="number"
-                            id="campaignTarget"
-                            placeholder="Enter target amount"
-                            min="1"
-                            required
-                        >
-
-                    </div>
+                    <button
+                        class="sidebar-item active"
+                        data-section="contributor-support"
+                    >
+                        Support Campaigns
+                    </button>
 
 
                     <button
-                        type="submit"
-                        class="primary-button"
+                        class="sidebar-item"
+                        data-section="contributor-history"
+                    >
+                        Contribution History
+                    </button>
+
+                </div>
+
+
+
+                <div class="dashboard-content">
+
+
+                    <!-- SUPPORT CAMPAIGNS -->
+
+                    <div
+                        id="contributor-support"
+                        class="dashboard-section"
+                    >
+
+                        <div class="content-card">
+
+                            <h1>
+                                Discover & Support Campaigns
+                            </h1>
+
+                            <div
+                                id="contributorCampaigns"
+                                class="campaign-grid"
+                            >
+
+                                <div class="loading-message">
+                                    Loading campaigns...
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+
+                    <!-- CONTRIBUTION HISTORY -->
+
+                    <div
+                        id="contributor-history"
+                        class="dashboard-section hidden"
+                    >
+
+                        <div class="content-card">
+
+                            <h1>
+                                Contribution History
+                            </h1>
+
+                            <div
+                                id="contributionHistory"
+                                class="history-list"
+                            >
+
+                                <div class="loading-message">
+                                    Loading contribution history...
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+
+            <!-- ================================================= -->
+            <!-- CREATOR DASHBOARD -->
+            <!-- ================================================= -->
+
+            <section
+                id="creatorDashboard"
+                class="role-dashboard hidden"
+            >
+
+                <div class="sidebar">
+
+                    <button
+                        class="sidebar-item active"
+                        data-section="creator-manage"
+                    >
+                        Manage Campaigns
+                    </button>
+
+
+                    <button
+                        class="sidebar-item"
+                        data-section="creator-create"
                     >
                         Create Campaign
                     </button>
 
-                </form>
-
-                <p id="campaignMessage"></p>
-
-            </div>
+                </div>
 
 
-            <!-- MY CAMPAIGNS -->
 
-            <div class="section-box">
+                <div class="dashboard-content">
 
-                <h2>My Campaigns</h2>
 
-                <div id="creatorCampaigns">
+                    <!-- MANAGE CAMPAIGNS -->
 
-                    <p class="empty-message">
-                        Loading campaigns...
-                    </p>
+                    <div
+                        id="creator-manage"
+                        class="dashboard-section"
+                    >
+
+                        <div class="content-card">
+
+                            <h1>
+                                My Campaigns
+                            </h1>
+
+                            <div
+                                id="creatorCampaigns"
+                                class="creator-campaign-list"
+                            >
+
+                                <div class="loading-message">
+                                    Loading campaigns...
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+
+                    <!-- CREATE CAMPAIGN -->
+
+                    <div
+                        id="creator-create"
+                        class="dashboard-section hidden"
+                    >
+
+                        <div class="content-card create-card">
+
+                            <h1>
+                                Create Campaign
+                            </h1>
+
+                            <p class="section-description">
+                                Create a new campaign and submit it
+                                for admin approval.
+                            </p>
+
+
+                            <form id="campaignForm">
+
+                                <div class="form-group">
+
+                                    <label for="campaignTitle">
+                                        Campaign Name
+                                    </label>
+
+                                    <input
+                                        type="text"
+                                        id="campaignTitle"
+                                        placeholder="Enter campaign name"
+                                        required
+                                    >
+
+                                </div>
+
+
+                                <div class="form-group">
+
+                                    <label for="campaignDescription">
+                                        Description
+                                    </label>
+
+                                    <textarea
+                                        id="campaignDescription"
+                                        placeholder="Describe your campaign"
+                                        rows="5"
+                                        required
+                                    ></textarea>
+
+                                </div>
+
+
+                                <div class="form-group">
+
+                                    <label for="campaignTarget">
+                                        Target Amount
+                                    </label>
+
+                                    <input
+                                        type="number"
+                                        id="campaignTarget"
+                                        placeholder="Enter target amount"
+                                        min="1"
+                                        step="0.01"
+                                        required
+                                    >
+
+                                </div>
+
+
+                                <button
+                                    type="submit"
+                                    class="primary-button"
+                                >
+                                    Create Campaign
+                                </button>
+
+                            </form>
+
+
+                            <div
+                                id="campaignMessage"
+                                class="form-message"
+                            ></div>
+
+                        </div>
+
+                    </div>
 
                 </div>
 
-            </div>
+            </section>
 
-        </section>
+
+
+            <!-- ================================================= -->
+            <!-- ADMIN DASHBOARD -->
+            <!-- ================================================= -->
+
+            <section
+                id="adminDashboard"
+                class="role-dashboard hidden"
+            >
+
+                <div class="sidebar">
+
+                    <button
+                        class="sidebar-item active"
+                        data-section="admin-users"
+                    >
+                        User Management
+                    </button>
+
+
+                    <button
+                        class="sidebar-item"
+                        data-section="admin-campaigns"
+                    >
+                        Campaign Management
+                    </button>
+
+
+                    <button
+                        class="sidebar-item"
+                        data-section="admin-settings"
+                    >
+                        System Settings
+                    </button>
+
+                </div>
+
+
+
+                <div class="dashboard-content">
+
+
+                    <!-- USER MANAGEMENT -->
+
+                    <div
+                        id="admin-users"
+                        class="dashboard-section"
+                    >
+
+                        <div class="content-card">
+
+                            <h1>
+                                User Management
+                            </h1>
+
+                            <div class="table-container">
+
+                                <table>
+
+                                    <thead>
+
+                                        <tr>
+
+                                            <th>
+                                                NAME
+                                            </th>
+
+                                            <th>
+                                                EMAIL
+                                            </th>
+
+                                            <th>
+                                                ROLE
+                                            </th>
+
+                                        </tr>
+
+                                    </thead>
+
+
+                                    <tbody id="usersTableBody">
+
+                                        <tr>
+
+                                            <td
+                                                colspan="3"
+                                                class="table-loading"
+                                            >
+                                                Loading users...
+                                            </td>
+
+                                        </tr>
+
+                                    </tbody>
+
+                                </table>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+
+                    <!-- CAMPAIGN MANAGEMENT -->
+
+                    <div
+                        id="admin-campaigns"
+                        class="dashboard-section hidden"
+                    >
+
+                        <div class="content-card">
+
+                            <h1>
+                                Campaign Management
+                            </h1>
+
+                            <div class="table-container">
+
+                                <table>
+
+                                    <thead>
+
+                                        <tr>
+
+                                            <th>
+                                                TITLE
+                                            </th>
+
+                                            <th>
+                                                GOAL
+                                            </th>
+
+                                            <th>
+                                                STATUS
+                                            </th>
+
+                                            <th>
+                                                ACTIONS
+                                            </th>
+
+                                        </tr>
+
+                                    </thead>
+
+
+                                    <tbody id="adminCampaigns">
+
+                                        <tr>
+
+                                            <td
+                                                colspan="4"
+                                                class="table-loading"
+                                            >
+                                                Loading campaigns...
+                                            </td>
+
+                                        </tr>
+
+                                    </tbody>
+
+                                </table>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+
+                    <!-- SYSTEM SETTINGS -->
+
+                    <div
+                        id="admin-settings"
+                        class="dashboard-section hidden"
+                    >
+
+                        <div class="content-card">
+
+                            <h1>
+                                System Settings
+                            </h1>
+
+                            <div class="settings-card">
+
+                                <div class="setting-row">
+
+                                    <div>
+
+                                        <strong>
+                                            Platform
+                                        </strong>
+
+                                        <p>
+                                            CrowdFund
+                                        </p>
+
+                                    </div>
+
+                                </div>
+
+
+                                <div class="setting-row">
+
+                                    <div>
+
+                                        <strong>
+                                            Authentication
+                                        </strong>
+
+                                        <p>
+                                            Firebase Authentication
+                                        </p>
+
+                                    </div>
+
+                                </div>
+
+
+                                <div class="setting-row">
+
+                                    <div>
+
+                                        <strong>
+                                            Database
+                                        </strong>
+
+                                        <p>
+                                            Firebase Firestore
+                                        </p>
+
+                                    </div>
+
+                                </div>
+
+
+                                <div class="setting-row">
+
+                                    <div>
+
+                                        <strong>
+                                            Updates
+                                        </strong>
+
+                                        <p>
+                                            Real-time Firestore updates
+                                        </p>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+        </main>
 
     </div>
 
 
-    <!-- Firebase + Application JS -->
 
-    <script type="module" src="script.js"></script>
+    <!-- Firebase + Application JavaScript -->
+
+    <script
+        type="module"
+        src="script.js"
+    ></script>
 
 </body>
 </html>
