@@ -1,19 +1,57 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
     <title>CrowdFund</title>
 
-    <link rel="stylesheet" href="style.css">
+    <link
+        rel="stylesheet"
+        href="style.css"
+    >
 </head>
 
 <body>
 
-    <!-- ================= LOGIN PAGE ================= -->
+    <!-- =====================================================
+         GLOBAL LOADING OVERLAY
+    ====================================================== -->
 
-    <div id="loginPage" class="login-page">
+    <div
+        id="loadingOverlay"
+        class="loading-overlay hidden"
+    >
+
+        <div class="loading-box">
+
+            <div class="spinner"></div>
+
+            <div
+                id="loadingText"
+                class="loading-text"
+            >
+                Loading...
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         LOGIN PAGE
+    ====================================================== -->
+
+    <div
+        id="loginPage"
+        class="login-page"
+    >
 
         <div class="login-card">
 
@@ -21,11 +59,14 @@
                 CrowdFund
             </div>
 
-            <h1>Welcome Back</h1>
+            <h1>
+                Welcome Back
+            </h1>
 
             <p class="login-subtitle">
                 Login to continue to CrowdFund
             </p>
+
 
             <form id="loginForm">
 
@@ -39,6 +80,7 @@
                         type="email"
                         id="loginEmail"
                         placeholder="Enter your email"
+                        autocomplete="email"
                         required
                     >
 
@@ -55,6 +97,7 @@
                         type="password"
                         id="loginPassword"
                         placeholder="Enter your password"
+                        autocomplete="current-password"
                         required
                     >
 
@@ -81,17 +124,25 @@
     </div>
 
 
+    <!-- =====================================================
+         MAIN APPLICATION
+    ====================================================== -->
 
-    <!-- ================= MAIN APPLICATION ================= -->
+    <div
+        id="appPage"
+        class="app-page hidden"
+    >
 
-    <div id="appPage" class="app-page hidden">
-
-
-        <!-- ================= HEADER ================= -->
+        <!-- =================================================
+             HEADER
+        ================================================== -->
 
         <header class="top-header">
 
-            <div class="brand" id="brandTitle">
+            <div
+                class="brand"
+                id="brandTitle"
+            >
                 CrowdFund
             </div>
 
@@ -116,15 +167,16 @@
         </header>
 
 
-
-        <!-- ================= APPLICATION BODY ================= -->
+        <!-- =================================================
+             APPLICATION BODY
+        ================================================== -->
 
         <main class="app-container">
 
 
-            <!-- ================================================= -->
-            <!-- CONTRIBUTOR DASHBOARD -->
-            <!-- ================================================= -->
+            <!-- =================================================
+                 CONTRIBUTOR DASHBOARD
+            ================================================== -->
 
             <section
                 id="contributorDashboard"
@@ -151,9 +203,7 @@
                 </div>
 
 
-
                 <div class="dashboard-content">
-
 
                     <!-- SUPPORT CAMPAIGNS -->
 
@@ -167,6 +217,7 @@
                             <h1>
                                 Discover & Support Campaigns
                             </h1>
+
 
                             <div
                                 id="contributorCampaigns"
@@ -184,7 +235,6 @@
                     </div>
 
 
-
                     <!-- CONTRIBUTION HISTORY -->
 
                     <div
@@ -197,6 +247,13 @@
                             <h1>
                                 Contribution History
                             </h1>
+
+
+                            <p class="section-description">
+                                View all campaigns you have supported
+                                and your contribution details.
+                            </p>
+
 
                             <div
                                 id="contributionHistory"
@@ -218,10 +275,9 @@
             </section>
 
 
-
-            <!-- ================================================= -->
-            <!-- CREATOR DASHBOARD -->
-            <!-- ================================================= -->
+            <!-- =================================================
+                 CREATOR DASHBOARD
+            ================================================== -->
 
             <section
                 id="creatorDashboard"
@@ -248,9 +304,7 @@
                 </div>
 
 
-
                 <div class="dashboard-content">
-
 
                     <!-- MANAGE CAMPAIGNS -->
 
@@ -264,6 +318,7 @@
                             <h1>
                                 My Campaigns
                             </h1>
+
 
                             <div
                                 id="creatorCampaigns"
@@ -279,7 +334,6 @@
                         </div>
 
                     </div>
-
 
 
                     <!-- CREATE CAMPAIGN -->
@@ -355,6 +409,7 @@
 
                                 <button
                                     type="submit"
+                                    id="createCampaignButton"
                                     class="primary-button"
                                 >
                                     Create Campaign
@@ -377,10 +432,9 @@
             </section>
 
 
-
-            <!-- ================================================= -->
-            <!-- ADMIN DASHBOARD -->
-            <!-- ================================================= -->
+            <!-- =================================================
+                 ADMIN DASHBOARD
+            ================================================== -->
 
             <section
                 id="adminDashboard"
@@ -415,9 +469,7 @@
                 </div>
 
 
-
                 <div class="dashboard-content">
-
 
                     <!-- USER MANAGEMENT -->
 
@@ -431,6 +483,11 @@
                             <h1>
                                 User Management
                             </h1>
+
+                            <p class="section-description">
+                                Manage users and update their platform roles.
+                            </p>
+
 
                             <div class="table-container">
 
@@ -452,6 +509,10 @@
                                                 ROLE
                                             </th>
 
+                                            <th>
+                                                ACTIONS
+                                            </th>
+
                                         </tr>
 
                                     </thead>
@@ -462,7 +523,7 @@
                                         <tr>
 
                                             <td
-                                                colspan="3"
+                                                colspan="4"
                                                 class="table-loading"
                                             >
                                                 Loading users...
@@ -481,7 +542,6 @@
                     </div>
 
 
-
                     <!-- CAMPAIGN MANAGEMENT -->
 
                     <div
@@ -494,6 +554,11 @@
                             <h1>
                                 Campaign Management
                             </h1>
+
+                            <p class="section-description">
+                                Review and manage campaign approval requests.
+                            </p>
+
 
                             <div class="table-container">
 
@@ -548,7 +613,6 @@
                     </div>
 
 
-
                     <!-- SYSTEM SETTINGS -->
 
                     <div
@@ -562,72 +626,57 @@
                                 System Settings
                             </h1>
 
+
                             <div class="settings-card">
 
                                 <div class="setting-row">
 
-                                    <div>
+                                    <strong>
+                                        Platform
+                                    </strong>
 
-                                        <strong>
-                                            Platform
-                                        </strong>
-
-                                        <p>
-                                            CrowdFund
-                                        </p>
-
-                                    </div>
+                                    <p>
+                                        CrowdFund
+                                    </p>
 
                                 </div>
 
 
                                 <div class="setting-row">
 
-                                    <div>
+                                    <strong>
+                                        Authentication
+                                    </strong>
 
-                                        <strong>
-                                            Authentication
-                                        </strong>
-
-                                        <p>
-                                            Firebase Authentication
-                                        </p>
-
-                                    </div>
+                                    <p>
+                                        Firebase Authentication
+                                    </p>
 
                                 </div>
 
 
                                 <div class="setting-row">
 
-                                    <div>
+                                    <strong>
+                                        Database
+                                    </strong>
 
-                                        <strong>
-                                            Database
-                                        </strong>
-
-                                        <p>
-                                            Firebase Firestore
-                                        </p>
-
-                                    </div>
+                                    <p>
+                                        Firebase Firestore
+                                    </p>
 
                                 </div>
 
 
                                 <div class="setting-row">
 
-                                    <div>
+                                    <strong>
+                                        Updates
+                                    </strong>
 
-                                        <strong>
-                                            Updates
-                                        </strong>
-
-                                        <p>
-                                            Real-time Firestore updates
-                                        </p>
-
-                                    </div>
+                                    <p>
+                                        Real-time Firestore updates
+                                    </p>
 
                                 </div>
 
@@ -646,8 +695,97 @@
     </div>
 
 
+    <!-- =====================================================
+         EDIT ROLE MODAL
+    ====================================================== -->
 
-    <!-- Firebase + Application JavaScript -->
+    <div
+        id="roleModal"
+        class="modal-overlay hidden"
+    >
+
+        <div class="role-modal">
+
+            <div class="modal-header">
+
+                <div>
+
+                    <h2>
+                        Edit User Role
+                    </h2>
+
+                    <p id="editUserName">
+                        Update user access level
+                    </p>
+
+                </div>
+
+
+                <button
+                    type="button"
+                    id="closeRoleModal"
+                    class="modal-close"
+                >
+                    ×
+                </button>
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label for="editUserRole">
+                    Select Role
+                </label>
+
+                <select id="editUserRole">
+
+                    <option value="ADMIN">
+                        Admin
+                    </option>
+
+                    <option value="CREATOR">
+                        Creator
+                    </option>
+
+                    <option value="CONTRIBUTOR">
+                        Contributor
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <div class="modal-actions">
+
+                <button
+                    type="button"
+                    id="cancelRoleEdit"
+                    class="secondary-button"
+                >
+                    Cancel
+                </button>
+
+
+                <button
+                    type="button"
+                    id="saveRoleButton"
+                    class="primary-button modal-save-button"
+                >
+                    Save Changes
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         FIREBASE + APPLICATION JS
+    ====================================================== -->
 
     <script
         type="module"
@@ -655,4 +793,5 @@
     ></script>
 
 </body>
+
 </html>

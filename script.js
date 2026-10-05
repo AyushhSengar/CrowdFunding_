@@ -6,6 +6,7 @@ import {
     initializeApp
 } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
 
+
 import {
     browserSessionPersistence,
     getAuth,
@@ -14,6 +15,7 @@ import {
     signInWithEmailAndPassword,
     signOut
 } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
+
 
 import {
     addDoc,
@@ -36,7 +38,8 @@ import {
 
 const firebaseConfig = {
 
-    apiKey: "AIzaSyBYiijyaBxtS_HkviqBzSEGTKI2m7vbtuI",
+    apiKey:
+        "AIzaSyBYiijyaBxtS_HkviqBzSEGTKI2m7vbtuI",
 
     authDomain:
         "crowdingfunding.firebaseapp.com",
@@ -58,6 +61,7 @@ const firebaseConfig = {
 
     measurementId:
         "G-8LTEXQZMXS"
+
 };
 
 
@@ -65,11 +69,16 @@ const firebaseConfig = {
    INITIALIZE FIREBASE
 ========================================================= */
 
-const app = initializeApp(firebaseConfig);
+const app =
+    initializeApp(firebaseConfig);
 
-const auth = getAuth(app);
 
-const db = getFirestore(app);
+const auth =
+    getAuth(app);
+
+
+const db =
+    getFirestore(app);
 
 
 /* =========================================================
@@ -94,69 +103,249 @@ let unsubscribeUsers = null;
 
 let unsubscribeContributions = null;
 
+let editingUserId = null;
+
 
 /* =========================================================
    DOM ELEMENTS
 ========================================================= */
 
 const loginPage =
-    document.getElementById("loginPage");
+    document.getElementById(
+        "loginPage"
+    );
+
 
 const appPage =
-    document.getElementById("appPage");
+    document.getElementById(
+        "appPage"
+    );
+
 
 const loginForm =
-    document.getElementById("loginForm");
+    document.getElementById(
+        "loginForm"
+    );
+
 
 const loginEmail =
-    document.getElementById("loginEmail");
+    document.getElementById(
+        "loginEmail"
+    );
+
 
 const loginPassword =
-    document.getElementById("loginPassword");
+    document.getElementById(
+        "loginPassword"
+    );
+
 
 const loginError =
-    document.getElementById("loginError");
+    document.getElementById(
+        "loginError"
+    );
+
+
+const loginButton =
+    document.querySelector(
+        ".login-button"
+    );
+
 
 const logoutButton =
-    document.getElementById("logoutButton");
+    document.getElementById(
+        "logoutButton"
+    );
+
 
 const loggedInUser =
-    document.getElementById("loggedInUser");
+    document.getElementById(
+        "loggedInUser"
+    );
+
 
 const brandTitle =
-    document.getElementById("brandTitle");
+    document.getElementById(
+        "brandTitle"
+    );
+
 
 const adminDashboard =
-    document.getElementById("adminDashboard");
+    document.getElementById(
+        "adminDashboard"
+    );
+
 
 const creatorDashboard =
-    document.getElementById("creatorDashboard");
+    document.getElementById(
+        "creatorDashboard"
+    );
+
 
 const contributorDashboard =
-    document.getElementById("contributorDashboard");
+    document.getElementById(
+        "contributorDashboard"
+    );
+
 
 const campaignForm =
-    document.getElementById("campaignForm");
+    document.getElementById(
+        "campaignForm"
+    );
+
 
 const campaignMessage =
-    document.getElementById("campaignMessage");
+    document.getElementById(
+        "campaignMessage"
+    );
+
+
+const createCampaignButton =
+    document.getElementById(
+        "createCampaignButton"
+    );
+
+
+const loadingOverlay =
+    document.getElementById(
+        "loadingOverlay"
+    );
+
+
+const loadingText =
+    document.getElementById(
+        "loadingText"
+    );
+
+
+const roleModal =
+    document.getElementById(
+        "roleModal"
+    );
+
+
+const editUserName =
+    document.getElementById(
+        "editUserName"
+    );
+
+
+const editUserRole =
+    document.getElementById(
+        "editUserRole"
+    );
+
+
+const closeRoleModal =
+    document.getElementById(
+        "closeRoleModal"
+    );
+
+
+const cancelRoleEdit =
+    document.getElementById(
+        "cancelRoleEdit"
+    );
+
+
+const saveRoleButton =
+    document.getElementById(
+        "saveRoleButton"
+    );
 
 
 /* =========================================================
    SESSION PERSISTENCE
+   browserSessionPersistence means each browser tab
+   maintains its own Firebase auth session.
 ========================================================= */
 
 setPersistence(
     auth,
     browserSessionPersistence
-).catch((error) => {
+).catch(
+    (error) => {
 
-    console.error(
-        "Persistence error:",
-        error
+        console.error(
+            "Persistence error:",
+            error
+        );
+
+    }
+);
+
+
+/* =========================================================
+   LOADING SYSTEM
+========================================================= */
+
+function showLoading(
+    message = "Loading..."
+) {
+
+    if (!loadingOverlay) {
+        return;
+    }
+
+    loadingText.textContent =
+        message;
+
+    loadingOverlay.classList.remove(
+        "hidden"
     );
 
-});
+}
+
+
+function hideLoading() {
+
+    if (!loadingOverlay) {
+        return;
+    }
+
+    loadingOverlay.classList.add(
+        "hidden"
+    );
+
+}
+
+
+function setButtonLoading(
+    button,
+    loading,
+    loadingLabel = "Loading..."
+) {
+
+    if (!button) {
+        return;
+    }
+
+
+    if (loading) {
+
+        button.dataset.originalText =
+            button.innerHTML;
+
+        button.disabled =
+            true;
+
+        button.innerHTML = `
+            <span class="button-spinner"></span>
+            ${loadingLabel}
+        `;
+
+    } else {
+
+        button.disabled =
+            false;
+
+        button.innerHTML =
+            button.dataset.originalText ||
+            "Submit";
+
+    }
+
+}
 
 
 /* =========================================================
@@ -169,13 +358,18 @@ loginForm.addEventListener(
 
         event.preventDefault();
 
-        loginError.textContent = "";
+
+        loginError.textContent =
+            "";
+
 
         const email =
             loginEmail.value.trim();
 
+
         const password =
             loginPassword.value;
+
 
         if (!email || !password) {
 
@@ -188,16 +382,30 @@ loginForm.addEventListener(
 
         try {
 
+            setButtonLoading(
+                loginButton,
+                true,
+                "Signing in..."
+            );
+
+
+            showLoading(
+                "Signing you in..."
+            );
+
+
             await setPersistence(
                 auth,
                 browserSessionPersistence
             );
+
 
             await signInWithEmailAndPassword(
                 auth,
                 email,
                 password
             );
+
 
         } catch (error) {
 
@@ -206,8 +414,10 @@ loginForm.addEventListener(
                 error
             );
 
+
             let message =
                 "Invalid email or password.";
+
 
             if (
                 error.code ===
@@ -241,10 +451,28 @@ loginForm.addEventListener(
                 message =
                     "Too many attempts. Please try again later.";
 
+            } else if (
+                error.code ===
+                "auth/network-request-failed"
+            ) {
+
+                message =
+                    "Network error. Please check your internet connection.";
+
             }
+
 
             loginError.textContent =
                 message;
+
+
+            hideLoading();
+
+
+            setButtonLoading(
+                loginButton,
+                false
+            );
 
         }
 
@@ -268,24 +496,51 @@ onAuthStateChanged(
 
             currentRole = null;
 
+            cleanupListeners();
+
             showLoginPage();
 
-            cleanupListeners();
+            hideLoading();
+
+            setButtonLoading(
+                loginButton,
+                false
+            );
 
             return;
         }
 
 
-        currentUser = user;
+        currentUser =
+            user;
 
 
         try {
 
-            await loadUserProfile(user.uid);
+            showLoading(
+                "Preparing your dashboard..."
+            );
+
+
+            await loadUserProfile(
+                user.uid
+            );
+
 
             showApplication();
 
+
             startRealtimeListeners();
+
+
+            hideLoading();
+
+
+            setButtonLoading(
+                loginButton,
+                false
+            );
+
 
         } catch (error) {
 
@@ -294,10 +549,17 @@ onAuthStateChanged(
                 error
             );
 
+
+            hideLoading();
+
+
             loginError.textContent =
                 "Unable to load your user profile.";
 
-            await signOut(auth);
+
+            await signOut(
+                auth
+            );
 
         }
 
@@ -309,13 +571,22 @@ onAuthStateChanged(
    LOAD USER PROFILE
 ========================================================= */
 
-async function loadUserProfile(uid) {
+async function loadUserProfile(
+    uid
+) {
 
     const userRef =
-        doc(db, "users", uid);
+        doc(
+            db,
+            "users",
+            uid
+        );
+
 
     const userSnapshot =
-        await getDoc(userRef);
+        await getDoc(
+            userRef
+        );
 
 
     if (!userSnapshot.exists()) {
@@ -344,7 +615,11 @@ async function loadUserProfile(uid) {
     ];
 
 
-    if (!allowedRoles.includes(currentRole)) {
+    if (
+        !allowedRoles.includes(
+            currentRole
+        )
+    ) {
 
         throw new Error(
             "Invalid user role."
@@ -365,6 +640,7 @@ function showLoginPage() {
         "hidden"
     );
 
+
     appPage.classList.add(
         "hidden"
     );
@@ -381,6 +657,7 @@ function showApplication() {
     loginPage.classList.add(
         "hidden"
     );
+
 
     appPage.classList.remove(
         "hidden"
@@ -405,19 +682,28 @@ function showApplication() {
     hideAllDashboards();
 
 
-    if (currentRole === "ADMIN") {
+    if (
+        currentRole ===
+        "ADMIN"
+    ) {
 
         adminDashboard.classList.remove(
             "hidden"
         );
 
-    } else if (currentRole === "CREATOR") {
+    } else if (
+        currentRole ===
+        "CREATOR"
+    ) {
 
         creatorDashboard.classList.remove(
             "hidden"
         );
 
-    } else if (currentRole === "CONTRIBUTOR") {
+    } else if (
+        currentRole ===
+        "CONTRIBUTOR"
+    ) {
 
         contributorDashboard.classList.remove(
             "hidden"
@@ -432,21 +718,42 @@ function showApplication() {
    ROLE LABEL
 ========================================================= */
 
-function getRoleLabel(role) {
+function getRoleLabel(
+    role
+) {
 
-    if (role === "ADMIN") {
+    if (
+        role ===
+        "ADMIN"
+    ) {
+
         return "Admin";
+
     }
 
-    if (role === "CREATOR") {
+
+    if (
+        role ===
+        "CREATOR"
+    ) {
+
         return "Creator";
+
     }
 
-    if (role === "CONTRIBUTOR") {
+
+    if (
+        role ===
+        "CONTRIBUTOR"
+    ) {
+
         return "Contributor";
+
     }
 
-    return role;
+
+    return role ||
+        "Unknown";
 
 }
 
@@ -461,9 +768,11 @@ function hideAllDashboards() {
         "hidden"
     );
 
+
     creatorDashboard.classList.add(
         "hidden"
     );
+
 
     contributorDashboard.classList.add(
         "hidden"
@@ -482,13 +791,37 @@ logoutButton.addEventListener(
 
         try {
 
-            await signOut(auth);
+            setButtonLoading(
+                logoutButton,
+                true,
+                "Logging out..."
+            );
+
+
+            showLoading(
+                "Signing you out..."
+            );
+
+
+            await signOut(
+                auth
+            );
+
 
         } catch (error) {
 
             console.error(
                 "Logout error:",
                 error
+            );
+
+
+            hideLoading();
+
+
+            setButtonLoading(
+                logoutButton,
+                false
             );
 
         }
@@ -506,20 +839,25 @@ function startRealtimeListeners() {
     cleanupListeners();
 
 
-    /* -----------------------------------------
+    /* =====================================================
        CAMPAIGNS
-    ----------------------------------------- */
+    ====================================================== */
 
     unsubscribeCampaigns =
         onSnapshot(
-            collection(db, "campaigns"),
+            collection(
+                db,
+                "campaigns"
+            ),
+
             (snapshot) => {
 
                 campaigns =
                     snapshot.docs.map(
                         (item) => ({
 
-                            id: item.id,
+                            id:
+                                item.id,
 
                             ...item.data()
 
@@ -530,6 +868,7 @@ function startRealtimeListeners() {
                 renderCampaigns();
 
             },
+
             (error) => {
 
                 console.error(
@@ -541,22 +880,30 @@ function startRealtimeListeners() {
         );
 
 
-    /* -----------------------------------------
+    /* =====================================================
        ADMIN USERS
-    ----------------------------------------- */
+    ====================================================== */
 
-    if (currentRole === "ADMIN") {
+    if (
+        currentRole ===
+        "ADMIN"
+    ) {
 
         unsubscribeUsers =
             onSnapshot(
-                collection(db, "users"),
+                collection(
+                    db,
+                    "users"
+                ),
+
                 (snapshot) => {
 
                     users =
                         snapshot.docs.map(
                             (item) => ({
 
-                                id: item.id,
+                                id:
+                                    item.id,
 
                                 ...item.data()
 
@@ -567,6 +914,7 @@ function startRealtimeListeners() {
                     renderUsers();
 
                 },
+
                 (error) => {
 
                     console.error(
@@ -580,15 +928,22 @@ function startRealtimeListeners() {
     }
 
 
-    /* -----------------------------------------
+    /* =====================================================
        CONTRIBUTION HISTORY
-    ----------------------------------------- */
+    ====================================================== */
 
-    if (currentRole === "CONTRIBUTOR") {
+    if (
+        currentRole ===
+        "CONTRIBUTOR"
+    ) {
 
         const contributionQuery =
             query(
-                collection(db, "donations"),
+                collection(
+                    db,
+                    "donations"
+                ),
+
                 where(
                     "contributorId",
                     "==",
@@ -600,13 +955,15 @@ function startRealtimeListeners() {
         unsubscribeContributions =
             onSnapshot(
                 contributionQuery,
+
                 (snapshot) => {
 
                     contributions =
                         snapshot.docs.map(
                             (item) => ({
 
-                                id: item.id,
+                                id:
+                                    item.id,
 
                                 ...item.data()
 
@@ -617,15 +974,18 @@ function startRealtimeListeners() {
                     contributions.sort(
                         (a, b) => {
 
-                            const aTime =
-                                a.createdAt?.seconds ||
-                                0;
+                            const dateA =
+                                getTimestampMillis(
+                                    a.createdAt
+                                );
 
-                            const bTime =
-                                b.createdAt?.seconds ||
-                                0;
+                            const dateB =
+                                getTimestampMillis(
+                                    b.createdAt
+                                );
 
-                            return bTime - aTime;
+                            return dateB -
+                                dateA;
 
                         }
                     );
@@ -634,6 +994,7 @@ function startRealtimeListeners() {
                     renderContributionHistory();
 
                 },
+
                 (error) => {
 
                     console.error(
@@ -655,29 +1016,38 @@ function startRealtimeListeners() {
 
 function cleanupListeners() {
 
-    if (unsubscribeCampaigns) {
+    if (
+        unsubscribeCampaigns
+    ) {
 
         unsubscribeCampaigns();
 
-        unsubscribeCampaigns = null;
+        unsubscribeCampaigns =
+            null;
 
     }
 
 
-    if (unsubscribeUsers) {
+    if (
+        unsubscribeUsers
+    ) {
 
         unsubscribeUsers();
 
-        unsubscribeUsers = null;
+        unsubscribeUsers =
+            null;
 
     }
 
 
-    if (unsubscribeContributions) {
+    if (
+        unsubscribeContributions
+    ) {
 
         unsubscribeContributions();
 
-        unsubscribeContributions = null;
+        unsubscribeContributions =
+            null;
 
     }
 
@@ -685,7 +1055,7 @@ function cleanupListeners() {
 
 
 /* =========================================================
-   RENDER EVERYTHING
+   RENDER ALL CAMPAIGN VIEWS
 ========================================================= */
 
 function renderCampaigns() {
@@ -695,6 +1065,8 @@ function renderCampaigns() {
     renderCreatorCampaigns();
 
     renderAdminCampaigns();
+
+    renderContributionHistory();
 
 }
 
@@ -716,19 +1088,43 @@ function renderContributorCampaigns() {
     }
 
 
+    if (
+        currentRole !==
+        "CONTRIBUTOR"
+    ) {
+
+        return;
+
+    }
+
+
     const approvedCampaigns =
         campaigns.filter(
-            (campaign) =>
-                String(campaign.status || "")
-                    .toUpperCase() === "APPROVED"
+            (campaign) => {
+
+                const status =
+                    String(
+                        campaign.status ||
+                        ""
+                    ).toUpperCase();
+
+                return (
+                    status ===
+                    "APPROVED"
+                );
+
+            }
         );
 
 
-    if (approvedCampaigns.length === 0) {
+    if (
+        approvedCampaigns.length ===
+        0
+    ) {
 
         container.innerHTML = `
             <div class="empty-message">
-                No approved campaigns available right now.
+                No approved campaigns are available right now.
             </div>
         `;
 
@@ -740,7 +1136,7 @@ function renderContributorCampaigns() {
         approvedCampaigns
             .map(
                 (campaign) =>
-                    createContributorCampaignHTML(
+                    renderCampaignCard(
                         campaign
                     )
             )
@@ -750,18 +1146,23 @@ function renderContributorCampaigns() {
 
 
 /* =========================================================
-   CONTRIBUTOR CAMPAIGN CARD
+   CAMPAIGN CARD
 ========================================================= */
 
-function createContributorCampaignHTML(
+function renderCampaignCard(
     campaign
 ) {
 
     const target =
-        Number(campaign.targetAmount) || 0;
+        Number(
+            campaign.targetAmount
+        ) || 0;
+
 
     const collected =
-        Number(campaign.collectedAmount) || 0;
+        Number(
+            campaign.collectedAmount
+        ) || 0;
 
 
     const percentage =
@@ -769,44 +1170,52 @@ function createContributorCampaignHTML(
             ? Math.min(
                 100,
                 Math.round(
-                    (collected / target) * 100
+                    (collected /
+                        target) *
+                    100
                 )
             )
             : 0;
 
 
     const completed =
-        percentage >= 100 ||
-        String(campaign.status || "")
-            .toUpperCase() === "COMPLETED";
+        collected >= target;
 
 
     return `
         <div class="campaign-card">
 
-            <h2>
+            <div class="campaign-title">
                 ${escapeHTML(
                     campaign.title ||
                     "Untitled Campaign"
                 )}
-            </h2>
+            </div>
 
-            <p class="campaign-description">
+
+            <div class="campaign-description">
                 ${escapeHTML(
                     campaign.description ||
                     "No description available."
                 )}
-            </p>
+            </div>
+
 
             <div class="amount-row">
 
                 <span>
-                    ${formatCurrency(collected)}
+                    ${formatCurrency(
+                        collected
+                    )}
                     raised (${percentage}%)
                 </span>
 
+
                 <span>
-                    Goal: ${formatCurrency(target)}
+                    Goal:
+                    ${formatCurrency(
+                        target
+                    )}
                 </span>
 
             </div>
@@ -831,11 +1240,13 @@ function createContributorCampaignHTML(
                 onclick="supportCampaign('${campaign.id}')"
                 ${completed ? "disabled" : ""}
             >
+
                 ${
                     completed
                         ? "Campaign Completed"
                         : "Support Campaign"
                 }
+
             </button>
 
         </div>
@@ -849,12 +1260,25 @@ function createContributorCampaignHTML(
 ========================================================= */
 
 window.supportCampaign =
-    async function (campaignId) {
+    async function (
+        campaignId
+    ) {
+
+        if (
+            currentRole !==
+            "CONTRIBUTOR"
+        ) {
+
+            return;
+
+        }
+
 
         const campaign =
             campaigns.find(
                 (item) =>
-                    item.id === campaignId
+                    item.id ===
+                    campaignId
             );
 
 
@@ -870,13 +1294,21 @@ window.supportCampaign =
 
 
         const target =
-            Number(campaign.targetAmount) || 0;
+            Number(
+                campaign.targetAmount
+            ) || 0;
+
 
         const collected =
-            Number(campaign.collectedAmount) || 0;
+            Number(
+                campaign.collectedAmount
+            ) || 0;
 
 
-        if (collected >= target) {
+        if (
+            collected >=
+            target
+        ) {
 
             alert(
                 "This campaign has already reached its goal."
@@ -888,7 +1320,8 @@ window.supportCampaign =
 
 
         const remaining =
-            target - collected;
+            target -
+            collected;
 
 
         const input =
@@ -897,17 +1330,26 @@ window.supportCampaign =
             );
 
 
-        if (input === null) {
+        if (
+            input ===
+            null
+        ) {
+
             return;
+
         }
 
 
         const amount =
-            Number(input);
+            Number(
+                input
+            );
 
 
         if (
-            !Number.isFinite(amount) ||
+            !Number.isFinite(
+                amount
+            ) ||
             amount <= 0
         ) {
 
@@ -920,7 +1362,10 @@ window.supportCampaign =
         }
 
 
-        if (amount > remaining) {
+        if (
+            amount >
+            remaining
+        ) {
 
             alert(
                 `Maximum contribution for this campaign is ${formatCurrency(remaining)}.`
@@ -931,16 +1376,172 @@ window.supportCampaign =
         }
 
 
+        const confirmed =
+            confirm(
+                `Contribute ${formatCurrency(amount)} to "${campaign.title}"?`
+            );
+
+
+        if (!confirmed) {
+
+            return;
+
+        }
+
+
         try {
 
-            await contributeToCampaign(
-                campaignId,
-                amount
+            showLoading(
+                "Processing your contribution..."
             );
+
+
+            const campaignRef =
+                doc(
+                    db,
+                    "campaigns",
+                    campaignId
+                );
+
+
+            await runTransaction(
+                db,
+                async (transaction) => {
+
+                    const campaignSnapshot =
+                        await transaction.get(
+                            campaignRef
+                        );
+
+
+                    if (
+                        !campaignSnapshot.exists()
+                    ) {
+
+                        throw new Error(
+                            "Campaign no longer exists."
+                        );
+
+                    }
+
+
+                    const latest =
+                        campaignSnapshot.data();
+
+
+                    const latestTarget =
+                        Number(
+                            latest.targetAmount
+                        ) || 0;
+
+
+                    const latestCollected =
+                        Number(
+                            latest.collectedAmount
+                        ) || 0;
+
+
+                    if (
+                        latestCollected >=
+                        latestTarget
+                    ) {
+
+                        throw new Error(
+                            "Campaign has already reached its goal."
+                        );
+
+                    }
+
+
+                    const latestRemaining =
+                        latestTarget -
+                        latestCollected;
+
+
+                    if (
+                        amount >
+                        latestRemaining
+                    ) {
+
+                        throw new Error(
+                            "Contribution exceeds the remaining campaign amount."
+                        );
+
+                    }
+
+
+                    const newCollected =
+                        latestCollected +
+                        amount;
+
+
+                    const newStatus =
+                        newCollected >=
+                        latestTarget
+                            ? "COMPLETED"
+                            : "APPROVED";
+
+
+                    transaction.update(
+                        campaignRef,
+                        {
+
+                            collectedAmount:
+                                newCollected,
+
+                            status:
+                                newStatus,
+
+                            updatedAt:
+                                serverTimestamp()
+
+                        }
+                    );
+
+                }
+            );
+
+
+            await addDoc(
+                collection(
+                    db,
+                    "donations"
+                ),
+                {
+
+                    contributorId:
+                        currentUser.uid,
+
+                    contributorEmail:
+                        currentUser.email,
+
+                    contributorName:
+                        currentUserData.name ||
+                        currentUser.email,
+
+                    campaignId:
+                        campaignId,
+
+                    campaignTitle:
+                        campaign.title,
+
+                    amount:
+                        amount,
+
+                    createdAt:
+                        serverTimestamp()
+
+                }
+            );
+
+
+            hideLoading();
+
 
             alert(
                 "Contribution successful!"
             );
+
 
         } catch (error) {
 
@@ -949,171 +1550,18 @@ window.supportCampaign =
                 error
             );
 
+
+            hideLoading();
+
+
             alert(
                 error.message ||
-                "Unable to complete contribution."
+                "Unable to process contribution."
             );
 
         }
 
     };
-
-
-/* =========================================================
-   CONTRIBUTE TRANSACTION
-========================================================= */
-
-async function contributeToCampaign(
-    campaignId,
-    amount
-) {
-
-    const campaignRef =
-        doc(
-            db,
-            "campaigns",
-            campaignId
-        );
-
-
-    await runTransaction(
-        db,
-        async (transaction) => {
-
-            const campaignSnapshot =
-                await transaction.get(
-                    campaignRef
-                );
-
-
-            if (
-                !campaignSnapshot.exists()
-            ) {
-
-                throw new Error(
-                    "Campaign does not exist."
-                );
-
-            }
-
-
-            const campaign =
-                campaignSnapshot.data();
-
-
-            const status =
-                String(
-                    campaign.status || ""
-                ).toUpperCase();
-
-
-            if (status !== "APPROVED") {
-
-                throw new Error(
-                    "This campaign is not currently available for contributions."
-                );
-
-            }
-
-
-            const currentCollected =
-                Number(
-                    campaign.collectedAmount
-                ) || 0;
-
-
-            const target =
-                Number(
-                    campaign.targetAmount
-                ) || 0;
-
-
-            const newCollected =
-                currentCollected + amount;
-
-
-            if (newCollected > target) {
-
-                throw new Error(
-                    "Contribution exceeds the campaign target."
-                );
-
-            }
-
-
-            const newStatus =
-                newCollected >= target
-                    ? "COMPLETED"
-                    : "APPROVED";
-
-
-            transaction.update(
-                campaignRef,
-                {
-
-                    collectedAmount:
-                        newCollected,
-
-                    status:
-                        newStatus,
-
-                    updatedAt:
-                        serverTimestamp()
-
-                }
-            );
-
-        }
-    );
-
-
-    /* -----------------------------------------
-       SAVE DONATION HISTORY
-    ----------------------------------------- */
-
-    const contributorName =
-        currentUserData.name ||
-        currentUserData.email ||
-        currentUser.email ||
-        "Contributor";
-
-
-    await addDoc(
-        collection(db, "donations"),
-        {
-
-            campaignId:
-
-                campaignId,
-
-            campaignTitle:
-
-                campaigns.find(
-                    (item) =>
-                        item.id === campaignId
-                )?.title ||
-                "Campaign",
-
-            contributorId:
-
-                currentUser.uid,
-
-            contributorName:
-
-                contributorName,
-
-            amount:
-
-                amount,
-
-            createdAt:
-
-                serverTimestamp()
-
-        }
-    );
-
-}
 
 
 /* =========================================================
@@ -1133,7 +1581,20 @@ function renderContributionHistory() {
     }
 
 
-    if (contributions.length === 0) {
+    if (
+        currentRole !==
+        "CONTRIBUTOR"
+    ) {
+
+        return;
+
+    }
+
+
+    if (
+        contributions.length ===
+        0
+    ) {
 
         container.innerHTML = `
             <div class="empty-message">
@@ -1156,31 +1617,43 @@ function renderContributionHistory() {
                         );
 
 
+                    const campaignTitle =
+                        getDonationCampaignTitle(
+                            item
+                        );
+
+
                     return `
                         <div class="history-item">
 
                             <div>
 
                                 <div class="history-title">
+
                                     ${escapeHTML(
-                                        item.campaignTitle ||
-                                        "Campaign"
+                                        campaignTitle
                                     )}
+
                                 </div>
 
+
                                 <div class="history-date">
+
                                     ${date}
+
                                 </div>
 
                             </div>
 
 
                             <div class="history-amount">
+
                                 + ${formatCurrency(
                                     Number(
                                         item.amount
                                     ) || 0
                                 )}
+
                             </div>
 
                         </div>
@@ -1189,6 +1662,42 @@ function renderContributionHistory() {
                 }
             )
             .join("");
+
+}
+
+
+/* =========================================================
+   GET ACTUAL CAMPAIGN NAME FOR DONATION
+========================================================= */
+
+function getDonationCampaignTitle(
+    item
+) {
+
+    if (
+        item.campaignTitle &&
+        item.campaignTitle !==
+            "Campaign"
+    ) {
+
+        return item.campaignTitle;
+
+    }
+
+
+    const campaign =
+        campaigns.find(
+            (campaign) =>
+                campaign.id ===
+                item.campaignId
+        );
+
+
+    return (
+        campaign?.title ||
+        item.campaignTitle ||
+        "Campaign"
+    );
 
 }
 
@@ -1210,6 +1719,16 @@ function renderCreatorCampaigns() {
     }
 
 
+    if (
+        currentRole !==
+        "CREATOR"
+    ) {
+
+        return;
+
+    }
+
+
     const ownCampaigns =
         campaigns.filter(
             (campaign) =>
@@ -1218,7 +1737,10 @@ function renderCreatorCampaigns() {
         );
 
 
-    if (ownCampaigns.length === 0) {
+    if (
+        ownCampaigns.length ===
+        0
+    ) {
 
         container.innerHTML = `
             <div class="empty-message">
@@ -1227,30 +1749,14 @@ function renderCreatorCampaigns() {
         `;
 
         return;
-
     }
-
-
-    ownCampaigns.sort(
-        (a, b) => {
-
-            const aTime =
-                a.createdAt?.seconds || 0;
-
-            const bTime =
-                b.createdAt?.seconds || 0;
-
-            return bTime - aTime;
-
-        }
-    );
 
 
     container.innerHTML =
         ownCampaigns
             .map(
                 (campaign) =>
-                    createCreatorCampaignHTML(
+                    renderCreatorCampaign(
                         campaign
                     )
             )
@@ -1260,18 +1766,23 @@ function renderCreatorCampaigns() {
 
 
 /* =========================================================
-   CREATOR CAMPAIGN HTML
+   CREATOR CAMPAIGN CARD
 ========================================================= */
 
-function createCreatorCampaignHTML(
+function renderCreatorCampaign(
     campaign
 ) {
 
     const target =
-        Number(campaign.targetAmount) || 0;
+        Number(
+            campaign.targetAmount
+        ) || 0;
+
 
     const collected =
-        Number(campaign.collectedAmount) || 0;
+        Number(
+            campaign.collectedAmount
+        ) || 0;
 
 
     const percentage =
@@ -1279,7 +1790,9 @@ function createCreatorCampaignHTML(
             ? Math.min(
                 100,
                 Math.round(
-                    (collected / target) * 100
+                    (collected /
+                        target) *
+                    100
                 )
             )
             : 0;
@@ -1287,63 +1800,61 @@ function createCreatorCampaignHTML(
 
     const status =
         String(
-            campaign.status || "PENDING"
+            campaign.status ||
+            "PENDING"
         ).toUpperCase();
 
 
-    const statusLabel =
-        status;
+    let statusMessage =
+        "";
 
 
-    let message = "";
+    if (
+        status ===
+        "PENDING"
+    ) {
 
-
-    if (status === "PENDING") {
-
-        message = `
-            <div class="status-message pending-message">
-                Your campaign has been submitted.
-                <strong>Admin will review and approve it.</strong>
-                Contributors cannot see it until it is approved.
+        statusMessage = `
+            <div class="status-note">
+                Your campaign is waiting for admin approval.
             </div>
         `;
 
-    } else if (status === "REJECTED") {
+    } else if (
+        status ===
+        "REJECTED"
+    ) {
 
-        message = `
-            <div class="status-message rejected-message">
-
-                <strong>
-                    Campaign Rejected
-                </strong>
-
-                <br>
-
+        statusMessage = `
+            <div class="status-note rejected-note">
                 ${
                     escapeHTML(
                         campaign.rejectionReason ||
-                        "No rejection reason provided."
+                        "Campaign was rejected by the admin."
                     )
                 }
-
             </div>
         `;
 
-    } else if (status === "APPROVED") {
+    } else if (
+        status ===
+        "APPROVED"
+    ) {
 
-        message = `
-            <div class="status-message approved-message">
-                Your campaign has been approved
-                and is now visible to contributors.
+        statusMessage = `
+            <div class="status-note approved-note">
+                Your campaign is live and accepting contributions.
             </div>
         `;
 
-    } else if (status === "COMPLETED") {
+    } else if (
+        status ===
+        "COMPLETED"
+    ) {
 
-        message = `
-            <div class="status-message approved-message">
-                Congratulations! Your campaign has
-                reached its target.
+        statusMessage = `
+            <div class="status-note approved-note">
+                Campaign has reached its target.
             </div>
         `;
 
@@ -1355,21 +1866,12 @@ function createCreatorCampaignHTML(
 
             <div class="creator-campaign-header">
 
-                <div>
+                <div class="creator-campaign-title">
 
-                    <h2>
-                        ${escapeHTML(
-                            campaign.title ||
-                            "Untitled Campaign"
-                        )}
-                    </h2>
-
-                    <p class="campaign-description">
-                        ${escapeHTML(
-                            campaign.description ||
-                            "No description available."
-                        )}
-                    </p>
+                    ${escapeHTML(
+                        campaign.title ||
+                        "Untitled Campaign"
+                    )}
 
                 </div>
 
@@ -1377,8 +1879,22 @@ function createCreatorCampaignHTML(
                 <span
                     class="status-badge ${getStatusClass(status)}"
                 >
-                    ${escapeHTML(statusLabel)}
+
+                    ${escapeHTML(
+                        status
+                    )}
+
                 </span>
+
+            </div>
+
+
+            <div class="creator-campaign-description">
+
+                ${escapeHTML(
+                    campaign.description ||
+                    "No description."
+                )}
 
             </div>
 
@@ -1386,14 +1902,18 @@ function createCreatorCampaignHTML(
             <div class="amount-row">
 
                 <span>
-                    Raised:
-                    ${formatCurrency(collected)}
-                    (${percentage}%)
+                    ${formatCurrency(
+                        collected
+                    )}
+                    raised (${percentage}%)
                 </span>
+
 
                 <span>
                     Goal:
-                    ${formatCurrency(target)}
+                    ${formatCurrency(
+                        target
+                    )}
                 </span>
 
             </div>
@@ -1413,7 +1933,7 @@ function createCreatorCampaignHTML(
             </div>
 
 
-            ${message}
+            ${statusMessage}
 
         </div>
     `;
@@ -1432,7 +1952,10 @@ campaignForm.addEventListener(
         event.preventDefault();
 
 
-        if (currentRole !== "CREATOR") {
+        if (
+            currentRole !==
+            "CREATOR"
+        ) {
 
             return;
 
@@ -1470,6 +1993,7 @@ campaignForm.addEventListener(
         campaignMessage.className =
             "form-message";
 
+
         campaignMessage.textContent =
             "";
 
@@ -1499,7 +2023,9 @@ campaignForm.addEventListener(
 
 
         if (
-            !Number.isFinite(target) ||
+            !Number.isFinite(
+                target
+            ) ||
             target <= 0
         ) {
 
@@ -1514,6 +2040,18 @@ campaignForm.addEventListener(
 
 
         try {
+
+            setButtonLoading(
+                createCampaignButton,
+                true,
+                "Creating..."
+            );
+
+
+            showLoading(
+                "Creating your campaign..."
+            );
+
 
             const creatorName =
                 currentUserData.name ||
@@ -1530,43 +2068,33 @@ campaignForm.addEventListener(
                 {
 
                     title:
-
                         title,
 
                     description:
-
                         description,
 
                     targetAmount:
-
                         target,
 
                     collectedAmount:
-
                         0,
 
                     creatorId:
-
                         currentUser.uid,
 
                     creatorName:
-
                         creatorName,
 
                     status:
-
                         "PENDING",
 
                     rejectionReason:
-
                         "",
 
                     createdAt:
-
                         serverTimestamp(),
 
                     updatedAt:
-
                         serverTimestamp()
 
                 }
@@ -1577,15 +2105,12 @@ campaignForm.addEventListener(
 
 
             showCampaignMessage(
-                "Campaign created successfully. Admin will review and approve it.",
+                "Campaign created successfully. It is now waiting for admin approval.",
                 false
             );
 
 
-            switchDashboardSection(
-                creatorDashboard,
-                "creator-manage"
-            );
+            hideLoading();
 
 
         } catch (error) {
@@ -1596,37 +2121,26 @@ campaignForm.addEventListener(
             );
 
 
+            hideLoading();
+
+
             showCampaignMessage(
-                "Unable to create campaign. Please try again.",
+                error.message ||
+                "Unable to create campaign.",
                 true
+            );
+
+        } finally {
+
+            setButtonLoading(
+                createCampaignButton,
+                false
             );
 
         }
 
     }
 );
-
-
-/* =========================================================
-   CAMPAIGN MESSAGE
-========================================================= */
-
-function showCampaignMessage(
-    message,
-    isError
-) {
-
-    campaignMessage.textContent =
-        message;
-
-
-    campaignMessage.classList.add(
-        isError
-            ? "error-form-message"
-            : "success-message"
-    );
-
-}
 
 
 /* =========================================================
@@ -1646,18 +2160,29 @@ function renderAdminCampaigns() {
     }
 
 
-    if (campaigns.length === 0) {
+    if (
+        currentRole !==
+        "ADMIN"
+    ) {
+
+        return;
+
+    }
+
+
+    if (
+        campaigns.length ===
+        0
+    ) {
 
         container.innerHTML = `
             <tr>
-
                 <td
                     colspan="4"
                     class="table-loading"
                 >
                     No campaigns found.
                 </td>
-
             </tr>
         `;
 
@@ -1671,12 +2196,17 @@ function renderAdminCampaigns() {
             (a, b) => {
 
                 const aTime =
-                    a.createdAt?.seconds || 0;
+                    getTimestampMillis(
+                        a.createdAt
+                    );
 
                 const bTime =
-                    b.createdAt?.seconds || 0;
+                    getTimestampMillis(
+                        b.createdAt
+                    );
 
-                return bTime - aTime;
+                return bTime -
+                    aTime;
 
             }
         );
@@ -1686,7 +2216,7 @@ function renderAdminCampaigns() {
         sortedCampaigns
             .map(
                 (campaign) =>
-                    createAdminCampaignRow(
+                    renderAdminCampaignRow(
                         campaign
                     )
             )
@@ -1699,25 +2229,28 @@ function renderAdminCampaigns() {
    ADMIN CAMPAIGN ROW
 ========================================================= */
 
-function createAdminCampaignRow(
+function renderAdminCampaignRow(
     campaign
 ) {
 
     const status =
         String(
-            campaign.status || "PENDING"
+            campaign.status ||
+            "PENDING"
         ).toUpperCase();
 
 
-    let actions = "";
+    let actions =
+        `<span class="muted-action">No action required</span>`;
 
 
     if (
-        status === "PENDING"
+        status ===
+        "PENDING"
     ) {
 
         actions = `
-            <div class="admin-actions">
+            <div class="admin-action-group">
 
                 <button
                     class="approve-button"
@@ -1725,6 +2258,7 @@ function createAdminCampaignRow(
                 >
                     Approve
                 </button>
+
 
                 <button
                     class="reject-button"
@@ -1736,14 +2270,6 @@ function createAdminCampaignRow(
             </div>
         `;
 
-    } else {
-
-        actions = `
-            <span class="table-muted">
-                No actions
-            </span>
-        `;
-
     }
 
 
@@ -1751,32 +2277,45 @@ function createAdminCampaignRow(
         <tr>
 
             <td>
+
                 ${escapeHTML(
                     campaign.title ||
                     "Untitled Campaign"
                 )}
+
             </td>
 
+
             <td>
+
                 ${formatCurrency(
                     Number(
                         campaign.targetAmount
                     ) || 0
                 )}
+
             </td>
+
 
             <td>
 
                 <span
                     class="status-badge ${getStatusClass(status)}"
                 >
-                    ${escapeHTML(status)}
+
+                    ${escapeHTML(
+                        status
+                    )}
+
                 </span>
 
             </td>
 
+
             <td>
+
                 ${actions}
+
             </td>
 
         </tr>
@@ -1790,9 +2329,14 @@ function createAdminCampaignRow(
 ========================================================= */
 
 window.approveCampaign =
-    async function (campaignId) {
+    async function (
+        campaignId
+    ) {
 
-        if (currentRole !== "ADMIN") {
+        if (
+            currentRole !==
+            "ADMIN"
+        ) {
 
             return;
 
@@ -1802,7 +2346,8 @@ window.approveCampaign =
         const campaign =
             campaigns.find(
                 (item) =>
-                    item.id === campaignId
+                    item.id ===
+                    campaignId
             );
 
 
@@ -1819,8 +2364,10 @@ window.approveCampaign =
 
         if (
             String(
-                campaign.status
-            ).toUpperCase() !== "PENDING"
+                campaign.status ||
+                ""
+            ).toUpperCase() !==
+            "PENDING"
         ) {
 
             alert(
@@ -1839,11 +2386,18 @@ window.approveCampaign =
 
 
         if (!confirmed) {
+
             return;
+
         }
 
 
         try {
+
+            showLoading(
+                "Approving campaign..."
+            );
+
 
             await updateDoc(
                 doc(
@@ -1872,9 +2426,13 @@ window.approveCampaign =
             );
 
 
+            hideLoading();
+
+
             alert(
                 "Campaign approved successfully."
             );
+
 
         } catch (error) {
 
@@ -1883,7 +2441,12 @@ window.approveCampaign =
                 error
             );
 
+
+            hideLoading();
+
+
             alert(
+                error.message ||
                 "Unable to approve campaign."
             );
 
@@ -1897,9 +2460,14 @@ window.approveCampaign =
 ========================================================= */
 
 window.rejectCampaign =
-    async function (campaignId) {
+    async function (
+        campaignId
+    ) {
 
-        if (currentRole !== "ADMIN") {
+        if (
+            currentRole !==
+            "ADMIN"
+        ) {
 
             return;
 
@@ -1909,7 +2477,8 @@ window.rejectCampaign =
         const campaign =
             campaigns.find(
                 (item) =>
-                    item.id === campaignId
+                    item.id ===
+                    campaignId
             );
 
 
@@ -1926,8 +2495,10 @@ window.rejectCampaign =
 
         if (
             String(
-                campaign.status
-            ).toUpperCase() !== "PENDING"
+                campaign.status ||
+                ""
+            ).toUpperCase() !==
+            "PENDING"
         ) {
 
             alert(
@@ -1946,7 +2517,8 @@ window.rejectCampaign =
 
 
         if (
-            reason === null
+            reason ===
+            null
         ) {
 
             return;
@@ -1954,12 +2526,27 @@ window.rejectCampaign =
         }
 
 
-        const finalReason =
-            reason.trim() ||
-            "Campaign rejected by administrator.";
+        const cleanReason =
+            reason.trim();
+
+
+        if (!cleanReason) {
+
+            alert(
+                "Please enter a rejection reason."
+            );
+
+            return;
+
+        }
 
 
         try {
+
+            showLoading(
+                "Rejecting campaign..."
+            );
+
 
             await updateDoc(
                 doc(
@@ -1973,7 +2560,7 @@ window.rejectCampaign =
                         "REJECTED",
 
                     rejectionReason:
-                        finalReason,
+                        cleanReason,
 
                     rejectedBy:
                         currentUser.uid,
@@ -1988,9 +2575,13 @@ window.rejectCampaign =
             );
 
 
+            hideLoading();
+
+
             alert(
-                "Campaign rejected."
+                "Campaign rejected successfully."
             );
+
 
         } catch (error) {
 
@@ -1999,7 +2590,12 @@ window.rejectCampaign =
                 error
             );
 
+
+            hideLoading();
+
+
             alert(
+                error.message ||
                 "Unable to reject campaign."
             );
 
@@ -2025,13 +2621,26 @@ function renderUsers() {
     }
 
 
-    if (users.length === 0) {
+    if (
+        currentRole !==
+        "ADMIN"
+    ) {
+
+        return;
+
+    }
+
+
+    if (
+        users.length ===
+        0
+    ) {
 
         container.innerHTML = `
             <tr>
 
                 <td
-                    colspan="3"
+                    colspan="4"
                     class="table-loading"
                 >
                     No users found.
@@ -2045,8 +2654,36 @@ function renderUsers() {
     }
 
 
+    const sortedUsers =
+        [...users].sort(
+            (a, b) => {
+
+                const nameA =
+                    String(
+                        a.name ||
+                        a.email ||
+                        ""
+                    ).toLowerCase();
+
+
+                const nameB =
+                    String(
+                        b.name ||
+                        b.email ||
+                        ""
+                    ).toLowerCase();
+
+
+                return nameA.localeCompare(
+                    nameB
+                );
+
+            }
+        );
+
+
     container.innerHTML =
-        users
+        sortedUsers
             .map(
                 (user) => {
 
@@ -2057,31 +2694,72 @@ function renderUsers() {
                         ).toUpperCase();
 
 
+                    const isCurrentUser =
+                        user.id ===
+                        currentUser.uid;
+
+
                     return `
                         <tr>
 
                             <td>
+
                                 ${escapeHTML(
                                     user.name ||
                                     "Unnamed User"
                                 )}
+
                             </td>
 
+
                             <td>
+
                                 ${escapeHTML(
                                     user.email ||
                                     "No email"
                                 )}
+
                             </td>
 
+
                             <td>
+
                                 <span
                                     class="status-badge ${getRoleBadgeClass(role)}"
                                 >
+
                                     ${escapeHTML(
-                                        getRoleLabel(role)
+                                        getRoleLabel(
+                                            role
+                                        )
                                     )}
+
                                 </span>
+
+                            </td>
+
+
+                            <td>
+
+                                <button
+                                    class="edit-user-button"
+                                    onclick="openRoleEditor('${user.id}')"
+                                >
+                                    Edit Role
+                                </button>
+
+                                ${
+                                    isCurrentUser
+                                        ? `
+                                            <span
+                                                class="current-user-label"
+                                            >
+                                                You
+                                            </span>
+                                        `
+                                        : ""
+                                }
+
                             </td>
 
                         </tr>
@@ -2092,6 +2770,251 @@ function renderUsers() {
             .join("");
 
 }
+
+
+/* =========================================================
+   OPEN ROLE EDITOR
+========================================================= */
+
+window.openRoleEditor =
+    function (
+        userId
+    ) {
+
+        if (
+            currentRole !==
+            "ADMIN"
+        ) {
+
+            return;
+
+        }
+
+
+        const user =
+            users.find(
+                (item) =>
+                    item.id ===
+                    userId
+            );
+
+
+        if (!user) {
+
+            alert(
+                "User not found."
+            );
+
+            return;
+
+        }
+
+
+        editingUserId =
+            userId;
+
+
+        editUserName.textContent =
+            `Change role for ${
+                user.name ||
+                user.email ||
+                "this user"
+            }`;
+
+
+        editUserRole.value =
+            String(
+                user.ROLE ||
+                "CONTRIBUTOR"
+            ).toUpperCase();
+
+
+        roleModal.classList.remove(
+            "hidden"
+        );
+
+    };
+
+
+/* =========================================================
+   CLOSE ROLE EDITOR
+========================================================= */
+
+function closeRoleEditor() {
+
+    editingUserId =
+        null;
+
+
+    roleModal.classList.add(
+        "hidden"
+    );
+
+}
+
+
+closeRoleModal.addEventListener(
+    "click",
+    closeRoleEditor
+);
+
+
+cancelRoleEdit.addEventListener(
+    "click",
+    closeRoleEditor
+);
+
+
+roleModal.addEventListener(
+    "click",
+    (event) => {
+
+        if (
+            event.target ===
+            roleModal
+        ) {
+
+            closeRoleEditor();
+
+        }
+
+    }
+);
+
+
+/* =========================================================
+   SAVE ROLE
+========================================================= */
+
+saveRoleButton.addEventListener(
+    "click",
+    async () => {
+
+        if (
+            currentRole !==
+            "ADMIN"
+        ) {
+
+            return;
+
+        }
+
+
+        if (!editingUserId) {
+
+            return;
+
+        }
+
+
+        const newRole =
+            editUserRole.value;
+
+
+        const selectedUser =
+            users.find(
+                (item) =>
+                    item.id ===
+                    editingUserId
+            );
+
+
+        if (!selectedUser) {
+
+            return;
+
+        }
+
+
+        const oldRole =
+            String(
+                selectedUser.ROLE ||
+                ""
+            ).toUpperCase();
+
+
+        if (
+            oldRole ===
+            newRole
+        ) {
+
+            closeRoleEditor();
+
+            return;
+
+        }
+
+
+        try {
+
+            setButtonLoading(
+                saveRoleButton,
+                true,
+                "Saving..."
+            );
+
+
+            showLoading(
+                "Updating user role..."
+            );
+
+
+            await updateDoc(
+                doc(
+                    db,
+                    "users",
+                    editingUserId
+                ),
+                {
+
+                    ROLE:
+                        newRole,
+
+                    updatedAt:
+                        serverTimestamp()
+
+                }
+            );
+
+
+            closeRoleEditor();
+
+
+            hideLoading();
+
+
+            alert(
+                `User role changed to ${getRoleLabel(newRole)} successfully.`
+            );
+
+
+        } catch (error) {
+
+            console.error(
+                "Role update error:",
+                error
+            );
+
+
+            hideLoading();
+
+
+            alert(
+                error.message ||
+                "Unable to update user role."
+            );
+
+        } finally {
+
+            setButtonLoading(
+                saveRoleButton,
+                false
+            );
+
+        }
+
+    }
+);
 
 
 /* =========================================================
@@ -2128,9 +3051,24 @@ document
                                 );
 
 
-                            switchDashboardSection(
-                                dashboard,
-                                sectionId
+                            showLoading(
+                                "Loading section..."
+                            );
+
+
+                            setTimeout(
+                                () => {
+
+                                    switchDashboardSection(
+                                        dashboard,
+                                        sectionId
+                                    );
+
+
+                                    hideLoading();
+
+                                },
+                                250
                             );
 
                         }
@@ -2157,37 +3095,86 @@ function switchDashboardSection(
     }
 
 
-    dashboard
-        .querySelectorAll(
-            ".sidebar-item"
-        )
-        .forEach(
-            (button) => {
-
-                button.classList.toggle(
-                    "active",
-                    button.dataset.section ===
-                    sectionId
-                );
-
-            }
-        );
-
-
-    dashboard
-        .querySelectorAll(
+    const sections =
+        dashboard.querySelectorAll(
             ".dashboard-section"
-        )
-        .forEach(
-            (section) => {
+        );
 
-                section.classList.toggle(
-                    "hidden",
-                    section.id !== sectionId
+
+    sections.forEach(
+        (section) => {
+
+            section.classList.add(
+                "hidden"
+            );
+
+        }
+    );
+
+
+    const targetSection =
+        dashboard.querySelector(
+            `#${sectionId}`
+        );
+
+
+    if (targetSection) {
+
+        targetSection.classList.remove(
+            "hidden"
+        );
+
+    }
+
+
+    const buttons =
+        dashboard.querySelectorAll(
+            ".sidebar-item"
+        );
+
+
+    buttons.forEach(
+        (button) => {
+
+            button.classList.remove(
+                "active"
+            );
+
+
+            if (
+                button.dataset.section ===
+                sectionId
+            ) {
+
+                button.classList.add(
+                    "active"
                 );
 
             }
-        );
+
+        }
+    );
+
+}
+
+
+/* =========================================================
+   CAMPAIGN MESSAGE
+========================================================= */
+
+function showCampaignMessage(
+    message,
+    isError = false
+) {
+
+    campaignMessage.textContent =
+        message;
+
+
+    campaignMessage.className =
+        isError
+            ? "form-message error-form-message"
+            : "form-message success-message";
 
 }
 
@@ -2201,23 +3188,33 @@ function getStatusClass(
 ) {
 
     switch (
-        String(status)
-            .toUpperCase()
+        String(
+            status || ""
+        ).toUpperCase()
     ) {
 
         case "APPROVED":
+
             return "status-approved";
 
+
         case "PENDING":
+
             return "status-pending";
 
+
         case "REJECTED":
+
             return "status-rejected";
 
+
         case "COMPLETED":
+
             return "status-completed";
 
+
         default:
+
             return "status-pending";
 
     }
@@ -2234,21 +3231,29 @@ function getRoleBadgeClass(
 ) {
 
     switch (
-        String(role)
-            .toUpperCase()
+        String(
+            role || ""
+        ).toUpperCase()
     ) {
 
         case "ADMIN":
+
             return "status-approved";
+
 
         case "CREATOR":
+
             return "status-pending";
+
 
         case "CONTRIBUTOR":
+
             return "status-approved";
 
+
         default:
-            return "status-pending";
+
+            return "status-rejected";
 
     }
 
@@ -2256,58 +3261,128 @@ function getRoleBadgeClass(
 
 
 /* =========================================================
-   CURRENCY
+   FORMAT CURRENCY
 ========================================================= */
 
 function formatCurrency(
     amount
 ) {
 
-    const number =
-        Number(amount) || 0;
-
-
     return new Intl.NumberFormat(
         "en-US",
         {
-            style: "currency",
-            currency: "USD",
-            maximumFractionDigits: 2
+            style:
+                "currency",
+
+            currency:
+                "USD",
+
+            minimumFractionDigits:
+                2
         }
-    ).format(number);
+    ).format(
+        Number(amount) || 0
+    );
 
 }
 
 
 /* =========================================================
-   TIMESTAMP
+   TIMESTAMP MILLISECONDS
+========================================================= */
+
+function getTimestampMillis(
+    timestamp
+) {
+
+    if (!timestamp) {
+
+        return 0;
+
+    }
+
+
+    if (
+        typeof timestamp.toMillis ===
+        "function"
+    ) {
+
+        return timestamp.toMillis();
+
+    }
+
+
+    if (
+        timestamp.seconds !==
+        undefined
+    ) {
+
+        return (
+            timestamp.seconds *
+            1000
+        );
+
+    }
+
+
+    if (
+        timestamp instanceof Date
+    ) {
+
+        return timestamp.getTime();
+
+    }
+
+
+    return 0;
+
+}
+
+
+/* =========================================================
+   FORMAT TIMESTAMP
 ========================================================= */
 
 function formatTimestamp(
     timestamp
 ) {
 
-    if (
-        !timestamp ||
-        !timestamp.seconds
-    ) {
+    const millis =
+        getTimestampMillis(
+            timestamp
+        );
 
-        return "Recently";
+
+    if (!millis) {
+
+        return "Just now";
 
     }
 
 
     const date =
         new Date(
-            timestamp.seconds * 1000
+            millis
         );
 
 
     return date.toLocaleString(
         "en-IN",
         {
-            dateStyle: "medium",
-            timeStyle: "short"
+            day:
+                "numeric",
+
+            month:
+                "short",
+
+            year:
+                "numeric",
+
+            hour:
+                "numeric",
+
+            minute:
+                "2-digit"
         }
     );
 
@@ -2322,39 +3397,17 @@ function escapeHTML(
     value
 ) {
 
-    return String(
-        value ?? ""
-    )
-        .replace(
-            /&/g,
-            "&amp;"
-        )
-        .replace(
-            /</g,
-            "&lt;"
-        )
-        .replace(
-            />/g,
-            "&gt;"
-        )
-        .replace(
-            /"/g,
-            "&quot;"
-        )
-        .replace(
-            /'/g,
-            "&#039;"
+    const div =
+        document.createElement(
+            "div"
         );
 
+
+    div.textContent =
+        value ??
+        "";
+
+
+    return div.innerHTML;
+
 }
-
-
-/* =========================================================
-   INITIAL RENDER
-========================================================= */
-
-renderCampaigns();
-
-renderUsers();
-
-renderContributionHistory();
